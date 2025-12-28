@@ -1,10 +1,14 @@
 from utils import *
+import urllib.request
 
 # ========= 配置区 =========
 ANNOTATED_JSON = "annotated_800k.json"   # 你的文件
+ANNOTATED_URL = "https://huggingface.co/datasets/cindyxl/ObjaversePlusPlus/resolve/main/annotated_800k.json"
+
 SAVE_DIR = "./objaversepp_obj"
 MAX_DOWNLOAD = 2        # 先下 10 个试试
 MIN_SCORE = 2            # 只要高质量（1~3）
+
 # ==========================
 
 if os.path.exists(SAVE_DIR):
@@ -12,6 +16,12 @@ if os.path.exists(SAVE_DIR):
     print(f"Removed existing directory: {SAVE_DIR}")
 os.makedirs(SAVE_DIR)
 
+# ---- 确保 annotated_800k.json 存在（没有就自动下载）----
+if not os.path.exists(ANNOTATED_JSON):
+    print(f"本地找不到 {ANNOTATED_JSON}，开始从 Hugging Face 下载…")
+    urllib.request.urlretrieve(ANNOTATED_URL, ANNOTATED_JSON)
+    print("下载完成！")
+    
 # -------- Step 1：读取 UID（来自 Objaverse++） --------
 print("读取 Objaverse++ 标注文件...")
 objpp_annotation_raw = load_json(ANNOTATED_JSON)
